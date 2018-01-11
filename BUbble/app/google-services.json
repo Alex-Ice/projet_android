@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "388894223642",
+    "firebase_url": "https://b-ubble.firebaseio.com",
+    "project_id": "b-ubble",
+    "storage_bucket": "b-ubble.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:388894223642:android:f9c03f7313c29f20",
+        "android_client_info": {
+          "package_name": "com.example.alexi.b_ubble"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "388894223642-cse5rjium57i9vv94ju6keailms52mi4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.alexi.b_ubble",
+            "certificate_hash": "8eb1e59b01dbd8ccc82944b9497198118eab295a"
+          }
+        },
+        {
+          "client_id": "388894223642-k5a8nppu6enmmq60s3s4c16u1cuvd5q6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_jt8Iurf_Qeb1_w_IvV53oHCfVyCoeZ0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "388894223642-k5a8nppu6enmmq60s3s4c16u1cuvd5q6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
