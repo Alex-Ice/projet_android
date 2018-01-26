@@ -59,16 +59,7 @@ public class MainActivity extends AppCompatActivity {
         picker1.setListener(new BubblePickerListener() {
             @Override
             public void onBubbleSelected(@NotNull PickerItem item) {
-                /*Bubble bounce animation*/
-                final Animation myAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.bounce);
-                picker1.startAnimation(myAnim);
-
-                // Use bounce interpolator with amplitude 0.2 and frequency 20
-                MyBounceInterpolator interpolator = new MyBounceInterpolator(0.2, 20);
-                myAnim.setInterpolator(interpolator);
-
-                picker1.startAnimation(myAnim);
-                Intent intent = new Intent(MainActivity.this, sea.class);
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 new CounterTask().execute(intent);
             }
 

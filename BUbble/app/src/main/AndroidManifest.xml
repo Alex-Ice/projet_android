@@ -31,7 +31,16 @@
         <activity
             android:name=".sea"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".MyBubble"></activity>
+        <activity android:name=".MyBubble"
+            android:parentActivityName=".sea"/>
+        <activity android:name=".AccountActivity"
+            android:parentActivityName=".RegisterActivity"/>
+        <activity android:name=".RegisterActivity"
+            android:parentActivityName=".LoginActivity"/>
+        <activity android:name=".ParamActivity"
+            android:parentActivityName=".MyBubble"/>
+        <activity android:name=".LoginActivity"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>
