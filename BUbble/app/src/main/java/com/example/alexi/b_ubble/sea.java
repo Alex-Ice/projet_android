@@ -1,6 +1,9 @@
 package com.example.alexi.b_ubble;
 
+import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +15,8 @@ import com.igalata.bubblepicker.model.PickerItem;
 import com.igalata.bubblepicker.rendering.BubblePicker;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 
 public class sea extends AppCompatActivity {
@@ -26,34 +31,32 @@ public class sea extends AppCompatActivity {
 
         final String[] titles = getResources().getStringArray(R.array.planets_array);
         final TypedArray colors = getResources().obtainTypedArray(R.array.colors);
-       //final TypedArray images = getResources().obtainTypedArray(R.array.images);
+        final int[] couleurs = {
+                Color.parseColor("#B9121B"),
+                Color.parseColor("#046380"),
+                Color.parseColor("#8E3557"),
+                Color.parseColor("#AEEE00")
+        };
+        //final TypedArray images = getResources().obtainTypedArray(R.array.images);
 
-        picker.setAdapter(new BubblePickerAdapter() {
-            @Override
-            public int getTotalCount() {
-                return titles.length;
-            }
-
-            @NotNull
-            @Override
-            public PickerItem getItem(int position) {
-                PickerItem item = new PickerItem();
-                item.setTitle(titles[position]);
-                item.setGradient(new BubbleGradient(colors.getColor((position * 2) % 8, 0),
-                        colors.getColor((position * 2) % 8 + 1, 0), BubbleGradient.VERTICAL));
-                //item.setTypeface(mediumTypeface);
-                item.setTextColor(ContextCompat.getColor(sea.this.getApplicationContext(), android.R.color.white));
-                //item.setBackgroundImage(ContextCompat.getDrawable(DemoActivity.this, images.getResourceId(position, 0)));
-                return item;
-            }
-        });
+        ArrayList<PickerItem> listItems = new ArrayList<PickerItem>() {};
+        for (int i = 0; i < titles.length; i++) {
+            PickerItem item = new PickerItem();
+            item.setTitle(titles[i]);
+            item.setTextColor(ContextCompat.getColor(sea.this.getApplicationContext(), android.R.color.white));
+            item.setGradient(new BubbleGradient(colors.getColor((i * 2) % 8, 0),
+                    colors.getColor((i * 2) % 8 + 1, 0), BubbleGradient.VERTICAL));
+            listItems.add(item);
+        }
+        picker.setItems(listItems);
 
         //To get all selected items picker.getSelectedItems() method in Java.
 
         picker.setListener(new BubblePickerListener() {
             @Override
             public void onBubbleSelected(@NotNull PickerItem item) {
-
+                Intent intent = new Intent(sea.this, MyBubble.class);
+                new CounterTask().execute(intent);
             }
 
             @Override
@@ -62,7 +65,20 @@ public class sea extends AppCompatActivity {
             }
         });
     }
+    class CounterTask extends AsyncTask<Intent, Void, Intent> {
+        @Override
+        protected Intent doInBackground(Intent... intents) {
+            int a = 0;
+            while (a != 200000000) {
+                a++;
+            } //environ 2 secondes
+            return intents[0];
+        }
 
+        protected void onPostExecute(Intent result) {
+            startActivity(result);
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -74,7 +90,6 @@ public class sea extends AppCompatActivity {
         super.onPause();
         picker.onPause();
     }
-
 }
 
 

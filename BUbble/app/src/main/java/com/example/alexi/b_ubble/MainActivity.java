@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        picker1.onPause();
         picker1.setListener(new BubblePickerListener() {
             @Override
             public void onBubbleSelected(@NotNull PickerItem item) {
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private class CounterTask extends AsyncTask<Intent, Void, Intent> {
+    class CounterTask extends AsyncTask<Intent, Void, Intent> {
         @Override
         protected Intent doInBackground(Intent... intents) {
             int a = 0;
