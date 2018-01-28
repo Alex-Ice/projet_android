@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BUbble.iml" filepath="$PROJECT_DIR$/BUbble.iml" />
+      <module fileurl="file://C:\Users\Yannick\Documents\GitHub\projet_android\BUbble\BUbble.iml" filepath="C:\Users\Yannick\Documents\GitHub\projet_android\BUbble\BUbble.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\Yannick\Documents\GitHub\projet_android\BUbble\app\app.iml" filepath="C:\Users\Yannick\Documents\GitHub\projet_android\BUbble\app\app.iml" />
     </modules>
   </component>
 </project>

@@ -86,7 +86,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             {
                 if(task.isSuccessful())
                 {
-                    Intent intent = new Intent(RegisterActivity.this, AccountActivity.class);
+                    Intent intent = new Intent(RegisterActivity.this, sea.class);
                     //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     progBar.setVisibility(View.GONE);
                     startActivity(intent);
