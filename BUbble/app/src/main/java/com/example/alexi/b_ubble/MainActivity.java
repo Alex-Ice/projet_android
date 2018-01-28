@@ -31,7 +31,17 @@ public class MainActivity extends AppCompatActivity {
 
         picker1 = findViewById(R.id.picker1);
 
-        final String[] titles = {"Bienvenue"};
+        final String[] titles = {"Bienvenue",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""};
+
         final TypedArray colors = getResources().obtainTypedArray(R.array.colors);
         //final TypedArray images = getResources().obtainTypedArray(R.array.images);
 
@@ -55,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        picker1.onPause();
         picker1.setListener(new BubblePickerListener() {
             @Override
             public void onBubbleSelected(@NotNull PickerItem item) {

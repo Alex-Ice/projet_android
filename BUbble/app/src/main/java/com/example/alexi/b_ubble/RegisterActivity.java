@@ -15,6 +15,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -22,6 +24,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     ProgressBar progBar;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +42,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         findViewById(R.id.RegisterButton).setOnClickListener(this);
         findViewById(R.id.textViewLogin).setOnClickListener(this);
+        myDb = FirebaseDatabase.getInstance().getReference().child("Users");
     }
 
     private void registerUser()
     {
         String email = editTextEmail.getText().toString().trim();
-        String username = editTextUsername.getText().toString().trim();
+        final String username = editTextUsername.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
         if(email.isEmpty())
@@ -86,6 +90,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             {
                 if(task.isSuccessful())
                 {
+                    final DatabaseReference newUser = myDb.push();
+                    //We store in the Firebase Database a user's ID and his username
+                    String user_id = mAuth.getCurrentUser().getUid();
+                    newUser.child("id").setValue(user_id);
+                    //DatabaseReference current_user_db = myDb.child(user_id);
+                    newUser.child("Username").setValue(username);
+
                     Intent intent = new Intent(RegisterActivity.this, AccountActivity.class);
                     //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     progBar.setVisibility(View.GONE);

@@ -14,12 +14,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText mEmailField;
     private EditText mPasswordField;
     private Button mLoginBtn;
+    private DatabaseReference myDB;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ProgressBar progBar;
@@ -30,6 +33,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
+        myDB = FirebaseDatabase.getInstance().getReference().child("Users");
         mEmailField = (EditText) findViewById(R.id.editEmail);
         mPasswordField = (EditText) findViewById(R.id.editMdp);
         mLoginBtn = (Button) findViewById(R.id.button2);
@@ -80,6 +84,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    //If the user has not a B-Ubble account (register)
     @Override
     public void onClick(View view)
     {

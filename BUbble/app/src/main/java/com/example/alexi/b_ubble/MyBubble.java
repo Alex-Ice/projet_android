@@ -35,6 +35,10 @@ public class MyBubble extends AppCompatActivity {
                         {Intent intent = new Intent(MyBubble.this, ParamActivity.class);
                             new CounterTask().execute(intent);
                             }
+                        if(arrayName[index]=="Private Messages")
+                        {Intent intent = new Intent(MyBubble.this, ChatMP.class);
+                            new CounterTask().execute(intent);
+                        }
 
                         Toast.makeText(MyBubble.this, "You selected"+arrayName[index], Toast.LENGTH_SHORT).show();
                     }
