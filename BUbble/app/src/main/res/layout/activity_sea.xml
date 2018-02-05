@@ -5,9 +5,9 @@
     android:layout_height="match_parent">
 
     <com.igalata.bubblepicker.rendering.BubblePicker
-        android:id="@+id/picker"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:backgroundColor="@android:color/white" />
+    android:id="@+id/picker"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:backgroundColor="@android:color/white" />
 
 </FrameLayout>

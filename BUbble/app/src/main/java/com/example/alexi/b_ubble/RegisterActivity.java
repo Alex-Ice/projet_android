@@ -15,10 +15,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     EditText editTextUsername, editTextPassword, editTextEmail;
     ProgressBar progBar;
@@ -45,38 +46,32 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         myDb = FirebaseDatabase.getInstance().getReference().child("Users");
     }
 
-    private void registerUser()
-    {
-        String email = editTextEmail.getText().toString().trim();
+    private void registerUser() {
+        final String email = editTextEmail.getText().toString().trim();
         final String username = editTextUsername.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
-        if(email.isEmpty())
-        {
+        if (email.isEmpty()) {
             editTextEmail.setError("Email est obligatoire !");
             editTextEmail.requestFocus();
             return;
         }
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches())
-        {
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             editTextEmail.setError("Email non valide");
             editTextEmail.requestFocus();
             return;
         }
-        if(password.isEmpty())
-        {
+        if (password.isEmpty()) {
             editTextPassword.setError("Mot de passe est obligatoire !");
             editTextPassword.requestFocus();
             return;
         }
-        if(password.length()<6)
-        {
+        if (password.length() < 6) {
             editTextPassword.setError("Minimum de 6 caractères pour le mot de passe");
             editTextPassword.requestFocus();
             return;
         }
-        if(username.isEmpty())
-        {
+        if (username.isEmpty()) {
             editTextUsername.setError("Nom d'utilisateur est obligatoire !");
             editTextUsername.requestFocus();
             return;
@@ -84,30 +79,30 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         progBar.setVisibility(View.VISIBLE);
 
-        mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task)
-            {
-                if(task.isSuccessful())
-                {
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+
                     final DatabaseReference newUser = myDb.push();
                     //We store in the Firebase Database a user's ID and his username
                     String user_id = mAuth.getCurrentUser().getUid();
                     newUser.child("id").setValue(user_id);
-                    //DatabaseReference current_user_db = myDb.child(user_id);
-                    newUser.child("Username").setValue(username);
+                    newUser.child("name").setValue(username);
+                    newUser.child("mail").setValue(email);
 
-                    Intent intent = new Intent(RegisterActivity.this, AccountActivity.class);
+                    Toast.makeText(getApplicationContext(), "Inscription réussie", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegisterActivity.this, sea.class);
+                    intent.putExtra("usernameR",username);
                     //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     progBar.setVisibility(View.GONE);
                     startActivity(intent);
-                }else{
+                } else {
 
-                    if(task.getException() instanceof FirebaseAuthUserCollisionException)
-                    {
+                    if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                         Toast.makeText(getApplicationContext(), "Compte déjà enregistré", Toast.LENGTH_SHORT).show();
                         progBar.setVisibility(View.GONE);
-                    }else{
+                    } else {
                         Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         progBar.setVisibility(View.GONE);
                     }
@@ -118,10 +113,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onClick(View view)
-    {
-        switch(view.getId())
-        {
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.RegisterButton:
 
                 registerUser();

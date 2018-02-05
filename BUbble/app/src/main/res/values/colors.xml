@@ -4,7 +4,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-
+    <color name="bluebottle">#34BBB3</color>
+    <color name="orange">#E67C19</color>
+    <color name="mauve">#976AC6</color>
     <color name="blueStart">#4EFFF3</color>
     <color name="blueEnd">#0ca6f9</color>
     <color name="purpleStart">#a369ff</color>

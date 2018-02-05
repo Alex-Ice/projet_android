@@ -8,81 +8,133 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class ChatMP extends AppCompatActivity {
 
-    private EditText editMsg;
-    private DatabaseReference myDb;
-    private DatabaseReference myDb_username;
-    private RecyclerView mMsgList;
-    private FirebaseAuth myAuth;
-    private FirebaseAuth.AuthStateListener myAuthListener;
-    private FirebaseUser myCurrentUser;
-    private DatabaseReference myDBUser;
+    private LinearLayout layout;
+    private RelativeLayout layout_2;
+    private ImageView sendButton;
+    private EditText messageArea;
+    private ScrollView scrollView;
+    private String myFriend, userID;
+    private DatabaseReference myDB, mDatabase;
+    private FirebaseAuth mAuth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_mp);
+        setContentView(R.layout.msg_chat);
 
-        editMsg = (EditText) findViewById(R.id.editMsg);
-        myDb = FirebaseDatabase.getInstance().getReference().child("Messages");
-        myDb_username = FirebaseDatabase.getInstance().getReference().child("Users");
+        layout = (LinearLayout) findViewById(R.id.layout1);
+        layout_2 = (RelativeLayout) findViewById(R.id.layout2);
+        sendButton = (ImageView) findViewById(R.id.sendButton);
+        messageArea = (EditText) findViewById(R.id.messageArea);
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
 
-        mMsgList = (RecyclerView) findViewById(R.id.msgrcy);
-        mMsgList.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setStackFromEnd(true);
-        mMsgList.setLayoutManager(linearLayoutManager);
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            myFriend = extras.getString("friend");
+        }
 
-        myAuth = FirebaseAuth.getInstance();
+        userID = mAuth.getCurrentUser().getUid();
+        myDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userID).child("name");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Message").push();
 
-        myAuthListener = new FirebaseAuth.AuthStateListener() {
+        myDB.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() == null) {
-                startActivity(new Intent(ChatMP.this, RegisterActivity.class));
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String me = dataSnapshot.getValue().toString();
+
+                mDatabase.child(me + "_" + myFriend);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        //Firebase.setAndroidContext(this);
+        //reference1 = new Firebase("https://androidchatapp-76776.firebaseio.com/messages/" + User.username + "_" + UserDetails.chatWith);
+        //reference2 = new Firebase("https://androidchatapp-76776.firebaseio.com/messages/" + UserDetails.chatWith + "_" + UserDetails.username);
+
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String messageText = messageArea.getText().toString();
+
+                if (!messageText.equals("")) {
+                    Map<String, String> map = new HashMap<String, String>();
+                    map.put("message", messageText);
+                    //map.put("user", UserDetails.username);
+                    //reference1.push().setValue(map);
+                    //reference2.push().setValue(map);
+                    messageArea.setText("");
                 }
             }
-        };
+        });
     }
 
-    public void sendButtonClicked(View view){
-        myCurrentUser = myAuth.getCurrentUser();
-        myDBUser = FirebaseDatabase.getInstance().getReference().child("Users").child(myCurrentUser.getUid());
-        final String MsgValue = editMsg.getText().toString().trim();
-        if(!TextUtils.isEmpty(MsgValue)){
-            final DatabaseReference newPost = myDb.push();
-            final DatabaseReference newPost_username = myDb_username.push();
-            myDBUser.addValueEventListener(new ValueEventListener() {
+            /*reference1.addChildEventListener(new ChildEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    newPost.child("content").setValue(MsgValue);
-                    newPost_username.child("Username").setValue(dataSnapshot.child("Username").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Map map = dataSnapshot.getValue(Map.class);
+                    String message = map.get("message").toString();
+                    String userName = map.get("user").toString();
 
-                        }
-                    });
+                    if(userName.equals(UserDetails.username)){
+                        addMessageBox("You:-\n" + message, 1);
+                    }
+                    else{
+                        addMessageBox(UserDetails.chatWith + ":-\n" + message, 2);
+                    }
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
                 }
 
                 @Override
@@ -90,56 +142,26 @@ public class ChatMP extends AppCompatActivity {
 
                 }
             });
+        }*/
 
-            //Automatic scroll when a new msg appears
-            mMsgList.scrollToPosition(mMsgList.getAdapter().getItemCount());
+    public void addMessageBox(String message, int type){
+        TextView textView = new TextView(ChatMP.this);
+        textView.setText(message);
+
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp2.weight = 1.0f;
+
+        if(type == 1) {
+            lp2.gravity = Gravity.LEFT;
+            //textView.setBackgroundResource(R.drawable.bubble_in);
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        myAuth.addAuthStateListener(myAuthListener);
-        FirebaseRecyclerAdapter <Message,MessageViewHolder> FBRecyclerAdapter = new FirebaseRecyclerAdapter<Message, MessageViewHolder>(
-
-            Message.class,
-            R.layout.single_msg_layout,
-            MessageViewHolder.class,
-            myDb
-            )
-        {
-            @Override
-            protected void populateViewHolder(MessageViewHolder viewHolder, Message model, int position) {
-                viewHolder.setContent((model.getContent()));
-                viewHolder.setUsername(model.getUsername());
-                viewHolder.setDate(model.getDate());
-            }
-        };
-        mMsgList.setAdapter(FBRecyclerAdapter);
-    }
-
-    public static class MessageViewHolder extends RecyclerView.ViewHolder{
-
-        View myView;
-        public MessageViewHolder(View itemView){
-            super(itemView);
-            myView = itemView;
+        else{
+            lp2.gravity = Gravity.RIGHT;
+            //textView.setBackgroundResource(R.drawable.bubble_out);
         }
-
-        public void setContent(String content){
-            TextView msg_content = (TextView) myView.findViewById(R.id.msgtxt);
-            msg_content.setText(content);
-        }
-
-        public void setUsername(String username){
-            TextView username_content = (TextView) myView.findViewById(R.id.usernametxt);
-            username_content.setText(username);
-        }
-
-        public void setDate(String date){
-            TextView date_content = (TextView) myView.findViewById(R.id.datetxt);
-            date = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy  ", Locale.getDefault()).format(new Date());
-            date_content.setText(date);
-        }
+        textView.setLayoutParams(lp2);
+        layout.addView(textView);
+        scrollView.fullScroll(View.FOCUS_DOWN);
     }
 }
+

@@ -1,46 +1,46 @@
 package com.example.alexi.b_ubble;
 
-/**
- * Created by alexi on 27/01/2018.
- */
+import java.util.Date;
 
 public class Message {
-    private String content, username,date;
 
-    //Default constructor
-    public Message() {
+    private String messageText;
+    private String messageUser;
+    private long messageTime;
+
+    public Message(String messageText, String messageUser) {
+        this.messageText = messageText;
+        this.messageUser = messageUser;
+
+        // Initialize to current time
+        messageTime = new Date().getTime();
     }
 
-    //Constructor
-    public Message(String content, String username, String date){
-        this.content = content;
-        this.username = username;
-        this.date = date;
+    public Message(){
+
     }
 
-    //Date getter
-    public String getDate(){return date;}
-
-    //Date setter
-    public void setDate(String date){
-        this.date = date;
+    public String getMessageText() {
+        return messageText;
     }
 
-    //Username getter
-    public String getUsername(){return username;}
-
-    //Username setter
-    public void setUsername(String username){
-        this.username = username;
+    public void setMessageText(String messageText) {
+        this.messageText = messageText;
     }
 
-    //Content getter
-    public String getContent(){
-        return content;
+    public String getMessageUser() {
+        return messageUser;
     }
 
-    //Content setter
-    public void setContent(String content){
-        this.content = content;
+    public void setMessageUser(String messageUser) {
+        this.messageUser = messageUser;
+    }
+
+    public long getMessageTime() {
+        return messageTime;
+    }
+
+    public void setMessageTime(long messageTime) {
+        this.messageTime = messageTime;
     }
 }

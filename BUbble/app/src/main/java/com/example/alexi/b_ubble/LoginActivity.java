@@ -1,6 +1,7 @@
 package com.example.alexi.b_ubble;
 
 import android.content.Intent;
+import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,18 +15,22 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText mEmailField;
     private EditText mPasswordField;
     private Button mLoginBtn;
-    private DatabaseReference myDB;
+    private DatabaseReference myDB, mDatabase;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ProgressBar progBar;
+    private String userID,username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +39,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         mAuth = FirebaseAuth.getInstance();
         myDB = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        userID = mAuth.getCurrentUser().getUid();
+        mDatabase = myDB.child(userID).child("name");
+
         mEmailField = (EditText) findViewById(R.id.editEmail);
         mPasswordField = (EditText) findViewById(R.id.editMdp);
         mLoginBtn = (Button) findViewById(R.id.button2);
@@ -69,12 +78,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 public void onComplete(@NonNull Task<AuthResult> task) {
 
                     if(task.isSuccessful()){
-                        Intent intent = new Intent(LoginActivity.this, sea.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        progBar.setVisibility(View.GONE);
-                        startActivity(intent);
+
+                        ValueEventListener valueEventListener = mDatabase.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.getValue() != null) {
+                                    username = dataSnapshot.getValue().toString();
+                                    Intent intent = new Intent(LoginActivity.this, sea.class);
+                                    intent.putExtra("usernameL",username);
+
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    progBar.setVisibility(View.GONE);
+                                    startActivity(intent);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
                     }else{
-                        Toast.makeText(LoginActivity.this, "Sign In Problem", Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, "Wrong email address or password", Toast.LENGTH_LONG).show();
                         progBar.setVisibility(View.GONE);
                     }
                 }

@@ -32,15 +32,15 @@ public class MainActivity extends AppCompatActivity {
         picker1 = findViewById(R.id.picker1);
 
         final String[] titles = {"Bienvenue",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""};
+        "Welcome",
+        "Willkommen",
+        "Bienvenidos",
+        "Haere Mai",
+        "Bem-vindo",
+        "Yôkoso",
+        "Welkom",
+        "Witajcie",
+        "добро пожаловать"};
 
         final TypedArray colors = getResources().obtainTypedArray(R.array.colors);
         //final TypedArray images = getResources().obtainTypedArray(R.array.images);
@@ -68,8 +68,9 @@ public class MainActivity extends AppCompatActivity {
         picker1.setListener(new BubblePickerListener() {
             @Override
             public void onBubbleSelected(@NotNull PickerItem item) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                new CounterTask().execute(intent);
+              Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+              new CounterTask().execute(intent);
+
             }
 
             @Override
