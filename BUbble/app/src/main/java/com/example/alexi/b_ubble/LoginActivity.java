@@ -27,7 +27,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText mPasswordField;
     private Button mLoginBtn;
     private DatabaseReference myDB, mDatabase;
-    private FirebaseAuth mAuth;
+    private FirebaseAuth myAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ProgressBar progBar;
     private String userID,username;
@@ -37,10 +37,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mAuth = FirebaseAuth.getInstance();
+        myAuth = FirebaseAuth.getInstance();
         myDB = FirebaseDatabase.getInstance().getReference().child("Users");
 
-        userID = mAuth.getCurrentUser().getUid();
+        userID = myAuth.getCurrentUser().getUid();
+        //userID = myDB.push().getKey();
         mDatabase = myDB.child(userID).child("name");
 
         mEmailField = (EditText) findViewById(R.id.editEmail);
@@ -73,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         }else{
 
-            mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            myAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
 

@@ -139,6 +139,11 @@ public class sea extends AppCompatActivity {
         super.onPause();
         picker.onPause();
     }
+
+    @Override
+    public void onBackPressed() {
+        finishAffinity();
+    }
 }
 
 

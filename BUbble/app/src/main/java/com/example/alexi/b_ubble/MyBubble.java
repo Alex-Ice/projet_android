@@ -7,15 +7,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.hitomi.cmlibrary.CircleMenu;
 import com.hitomi.cmlibrary.OnMenuSelectedListener;
+
 
 public class MyBubble extends AppCompatActivity {
 
     String arrayName[] = {"B-Humor",
                            "Pictures",
                             "Private Messages",
-                            "Settings"};
+                            "Settings",
+                            "Logout"};
+    FirebaseAuth user = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +32,7 @@ public class MyBubble extends AppCompatActivity {
                 .addSubMenu(Color.parseColor("#20599A"), R.drawable.picture_icon)
                 .addSubMenu(Color.parseColor("#0D5FCA"), R.drawable.mp_icon)
                 .addSubMenu(Color.parseColor("#EA6E10"), R.drawable.settings_icon1)
+                .addSubMenu(Color.parseColor("#F10C0C"), R.drawable.ic_exit_to_app_black_24dp)
                 .setOnMenuSelectedListener(new OnMenuSelectedListener() {
                     @Override
                     public void onMenuSelected(int index) {
@@ -38,6 +43,10 @@ public class MyBubble extends AppCompatActivity {
                         if(arrayName[index]=="Private Messages")
                         {Intent intent = new Intent(MyBubble.this, Contacts.class);
                             new CounterTask().execute(intent);
+                        }
+                        if(arrayName[index]=="Logout")
+                        {
+                            finishAffinity();
                         }
 
                         Toast.makeText(MyBubble.this, "You selected "+arrayName[index], Toast.LENGTH_SHORT).show();

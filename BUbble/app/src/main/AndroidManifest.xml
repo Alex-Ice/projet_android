@@ -43,7 +43,8 @@
         <activity
             android:name=".ChatMP"
             android:parentActivityName=".Contacts" />
-        <activity android:name=".Contacts"
+        <activity
+            android:name=".Contacts"
             android:parentActivityName=".MyBubble"/>
 
     </application>

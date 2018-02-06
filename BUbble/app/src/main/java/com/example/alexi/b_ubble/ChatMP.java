@@ -47,7 +47,7 @@ public class ChatMP extends AppCompatActivity {
     private EditText messageArea;
     private ScrollView scrollView;
     private String myFriend, userID;
-    private DatabaseReference myDB, mDatabase;
+    private DatabaseReference myDB, reference1, reference2;
     private FirebaseAuth mAuth;
 
 
@@ -67,16 +67,73 @@ public class ChatMP extends AppCompatActivity {
             myFriend = extras.getString("friend");
         }
 
+        mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
         myDB = FirebaseDatabase.getInstance().getReference().child("Users").child(userID).child("name");
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Message").push();
+
 
         myDB.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String me = dataSnapshot.getValue().toString();
+                final String me = dataSnapshot.getValue().toString();
 
-                mDatabase.child(me + "_" + myFriend);
+                reference1 = FirebaseDatabase.getInstance().getReference().child("Message").child(me+"_"+myFriend);
+
+                reference2 = FirebaseDatabase.getInstance().getReference().child("Message").child(myFriend+"_"+me);
+
+                reference1.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                        if(dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                            Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                            String message = map.get("message").toString();
+                            String userName = map.get("user").toString();
+
+                            if (userName.equals(me)) {
+                                addMessageBox("You:-\n" + message, 1);
+                            }
+                            else {
+                                addMessageBox(myFriend + ":-\n" + message, 2);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                sendButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String messageText = messageArea.getText().toString();
+
+                        if (!messageText.equals("")) {
+                            Map<String, String> map = new HashMap<String, String>();
+                            map.put("message", messageText);
+                            map.put("user", me);
+                            reference1.push().setValue(map);
+                            reference2.push().setValue(map);
+                            messageArea.setText("");
+                        }
+                    }
+                });
             }
 
             @Override
@@ -86,63 +143,7 @@ public class ChatMP extends AppCompatActivity {
         });
 
 
-        //Firebase.setAndroidContext(this);
-        //reference1 = new Firebase("https://androidchatapp-76776.firebaseio.com/messages/" + User.username + "_" + UserDetails.chatWith);
-        //reference2 = new Firebase("https://androidchatapp-76776.firebaseio.com/messages/" + UserDetails.chatWith + "_" + UserDetails.username);
-
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String messageText = messageArea.getText().toString();
-
-                if (!messageText.equals("")) {
-                    Map<String, String> map = new HashMap<String, String>();
-                    map.put("message", messageText);
-                    //map.put("user", UserDetails.username);
-                    //reference1.push().setValue(map);
-                    //reference2.push().setValue(map);
-                    messageArea.setText("");
-                }
-            }
-        });
-    }
-
-            /*reference1.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Map map = dataSnapshot.getValue(Map.class);
-                    String message = map.get("message").toString();
-                    String userName = map.get("user").toString();
-
-                    if(userName.equals(UserDetails.username)){
-                        addMessageBox("You:-\n" + message, 1);
-                    }
-                    else{
-                        addMessageBox(UserDetails.chatWith + ":-\n" + message, 2);
-                    }
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }*/
+        }
 
     public void addMessageBox(String message, int type){
         TextView textView = new TextView(ChatMP.this);

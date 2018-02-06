@@ -48,6 +48,20 @@ public class Contacts extends AppCompatActivity {
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                mDatabase = dbRef.child(userID).child("name");
+                mDatabase.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String currentUser = dataSnapshot.getValue().toString();
+                        list.remove(currentUser);
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         if(ds.child("name").getValue() != null) {
                             list.add(ds.child("name").getValue().toString());
@@ -68,9 +82,7 @@ public class Contacts extends AppCompatActivity {
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String currentUser = dataSnapshot.getValue().toString();
-                list.remove(currentUser);
-                adapter.notifyDataSetChanged();
+
             }
 
             @Override
