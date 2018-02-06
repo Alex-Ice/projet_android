@@ -1,6 +1,8 @@
 package com.example.alexi.b_ubble;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -49,7 +51,9 @@ public class ParamActivity extends AppCompatActivity {
     private String mName;
     private String profileImageUrl;
 
+
     private Uri resultUri;
+    private Bitmap imageBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +73,7 @@ public class ParamActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                showImageChooser();
+                selectImage();
 
             }
         });
@@ -169,6 +173,40 @@ public class ParamActivity extends AppCompatActivity {
             });
 
         }
+        else if(user != null && imageBitmap != null)
+        {
+            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userID);
+
+            ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos2);
+            byte[] data2 = baos2.toByteArray();
+            UploadTask uploadTask2 = filePath.putBytes(data2);
+
+            uploadTask2.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    finish();
+                    return;
+                }
+            });
+            uploadTask2.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
+            {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+                {
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                    Map newImage = new HashMap();
+                    newImage.put("profileImageUrl", downloadUrl.toString());
+                    mCustomerDatabase.updateChildren(newImage);
+
+                    finish();
+                    return;
+
+                }
+            });
+
+        }
         else
         {
             finish();
@@ -183,18 +221,79 @@ public class ParamActivity extends AppCompatActivity {
 
         if(requestCode == 1 && resultCode == Activity.RESULT_OK)
         {
-            final Uri imageUri = data.getData();
-            resultUri = imageUri;
-            imageView.setImageURI(resultUri);
+            onSelectFromGalleryResult(data);
+
+        }
+        else if(requestCode == 0 && resultCode == Activity.RESULT_OK)
+        {
+            onCaptureImageResult(data);
+        }
+        else if(requestCode == 3 && resultCode == Activity.RESULT_OK)
+        {
+            //onSelectFromGalleryResult2(data);
+        }
+        else if(requestCode == 2 && resultCode == Activity.RESULT_OK)
+        {
+            //onCaptureImageResult2(data);
         }
 
     }
-
-    private void showImageChooser()
+    private void selectImage()
     {
-        Intent intent = new Intent(Intent.ACTION_PICK);
+        final CharSequence[] items = {"Camera", "Gallery", "Cancel"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(ParamActivity.this);
+        builder.setTitle("Add Photo");
+        builder.setItems(items, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                if(items[i].equals("Camera"))
+                {
+                    cameraIntent();
+                }
+                else if(items[i].equals("Gallery"))
+                {
+                    galleryIntent();
+                }
+                else if(items[i].equals("Cancel"))
+                {
+                    dialogInterface.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void cameraIntent()
+    {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(takePictureIntent.resolveActivity(getPackageManager()) != null)
+        {
+            startActivityForResult(takePictureIntent, 0);
+        }
+    }
+
+    private void galleryIntent()
+    {
+        Intent intent = new Intent();
         intent.setType("image/*");
-        startActivityForResult(intent, 1);
+        intent.setAction(Intent.ACTION_GET_CONTENT);//
+        startActivityForResult(Intent.createChooser(intent, "Select File"),1);
+    }
+
+    private void onSelectFromGalleryResult(Intent data)
+    {
+        final Uri imageUri = data.getData();
+        resultUri = imageUri;
+        imageView.setImageURI(resultUri);
+    }
+
+    private void onCaptureImageResult(Intent data)
+    {
+        Bundle extras = data.getExtras();
+        imageBitmap = (Bitmap) extras.get("data");
+        imageView.setImageBitmap(imageBitmap);
     }
 
 }
