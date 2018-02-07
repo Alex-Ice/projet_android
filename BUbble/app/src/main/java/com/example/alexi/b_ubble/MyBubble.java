@@ -38,10 +38,10 @@ import java.util.Map;
 public class MyBubble extends AppCompatActivity {
 
     String arrayName[] = {"B-Humor",
-                           "Pictures",
-                            "Private Messages",
-                            "Settings",
-                            "Logout"};
+            "Pictures",
+            "Private Messages",
+            "Settings",
+            "Logout"};
     FirebaseAuth user = FirebaseAuth.getInstance();
 
     private Bitmap imageBitmap;
@@ -73,7 +73,7 @@ public class MyBubble extends AppCompatActivity {
                         if(arrayName[index]=="Settings")
                         {Intent intent = new Intent(MyBubble.this, ParamActivity.class);
                             new CounterTask().execute(intent);
-                            }
+                        }
                         if(arrayName[index]=="Private Messages")
                         {Intent intent = new Intent(MyBubble.this, Contacts.class);
                             new CounterTask().execute(intent);

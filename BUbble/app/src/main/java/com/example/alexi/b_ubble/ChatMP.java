@@ -1,7 +1,10 @@
 package com.example.alexi.b_ubble;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -90,6 +93,8 @@ public class ChatMP extends AppCompatActivity {
                             String message = map.get("message").toString();
                             String userName = map.get("user").toString();
 
+                            //String messageTime = map.get("time").toString();
+
                             if (userName.equals(me)) {
                                 addMessageBox("You:-\n" + message, 1);
                             }
@@ -128,6 +133,7 @@ public class ChatMP extends AppCompatActivity {
                             Map<String, String> map = new HashMap<String, String>();
                             map.put("message", messageText);
                             map.put("user", me);
+                            //map.put("time", msgTime);
                             reference1.push().setValue(map);
                             reference2.push().setValue(map);
                             messageArea.setText("");
@@ -164,5 +170,6 @@ public class ChatMP extends AppCompatActivity {
         layout.addView(textView);
         scrollView.fullScroll(View.FOCUS_DOWN);
     }
+
 }
 

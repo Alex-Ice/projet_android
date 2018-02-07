@@ -37,7 +37,7 @@ public class sea extends AppCompatActivity {
     private BubblePicker picker;
     private String  username;
     private String profileImageUrl;
-    private final ArrayList<String> list = new ArrayList<String>();
+    private ArrayList<String> list = new ArrayList<String>();
     private Uri resultUri;
 
     @Override
@@ -57,6 +57,9 @@ public class sea extends AppCompatActivity {
             }
             Toast.makeText(sea.this, "Welcome  " + username, Toast.LENGTH_LONG).show();
         }
+
+        //We catch the list of all users in the intent
+        list = getIntent().getStringArrayListExtra("list_user");
         list.add(username);
         DrawBubble(list);
 
@@ -81,9 +84,6 @@ public class sea extends AppCompatActivity {
     public void DrawBubble(ArrayList<String> mList) {
         if (mList != null) {
             //List are more scalable
-            mList.add("User1");
-            mList.add("User2");
-            mList.add("User3");
 
             String[] titles = new String[mList.size()];
             titles = mList.toArray(titles);
@@ -111,8 +111,14 @@ public class sea extends AppCompatActivity {
                 @Override
                 public void onBubbleSelected(@NotNull PickerItem item) {
                     //If we click on our bubble, we go to our settings
-                    Intent intent = new Intent(sea.this, MyBubble.class);
-                    new CounterTask().execute(intent);
+                    if(item.getTitle() == username) {
+                        Intent intent = new Intent(sea.this, MyBubble.class);
+                        new CounterTask().execute(intent);
+                    }
+                    else {
+                        Toast.makeText(sea.this, item.getTitle(), Toast.LENGTH_LONG).show();
+                    }
+
                 }
 
                 @Override

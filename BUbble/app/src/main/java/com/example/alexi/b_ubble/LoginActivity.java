@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText mEmailField;
@@ -30,6 +33,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth myAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ProgressBar progBar;
+    private final ArrayList<String> list = new ArrayList<String>();
     private String userID,username;
 
     @Override
@@ -79,19 +83,40 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 public void onComplete(@NonNull Task<AuthResult> task) {
 
                     if(task.isSuccessful()){
-
-                        ValueEventListener valueEventListener = mDatabase.addValueEventListener(new ValueEventListener() {
+                        final Intent intent = new Intent(LoginActivity.this, sea.class);
+                        myDB.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.getValue() != null) {
-                                    username = dataSnapshot.getValue().toString();
-                                    Intent intent = new Intent(LoginActivity.this, sea.class);
-                                    intent.putExtra("usernameL",username);
+                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                    if(ds.child("name").getValue() != null) {
+                                        list.add(ds.child("name").getValue().toString());
+                                        intent.putStringArrayListExtra("list_user",list);
 
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    progBar.setVisibility(View.GONE);
-                                    startActivity(intent);
-                                }
+                                    }
+                                    else {
+                                        Log.d("EmptyData", "EMPTY");
+                                    }
+                            }
+                                mDatabase.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if(dataSnapshot.getValue() != null) {
+                                            username = dataSnapshot.getValue().toString();
+                                            Log.d("Username", username);
+                                            list.remove(username);
+
+                                            intent.putExtra("usernameL",username);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            progBar.setVisibility(View.GONE);
+                                            startActivity(intent);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
                             }
 
                             @Override
@@ -99,6 +124,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                             }
                         });
+
+
 
                     }else{
                         Toast.makeText(LoginActivity.this, "Wrong email address or password", Toast.LENGTH_LONG).show();
