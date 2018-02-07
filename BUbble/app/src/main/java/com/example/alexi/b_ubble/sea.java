@@ -49,11 +49,13 @@ public class sea extends AppCompatActivity {
         //We catch the name of the current user in the intent
         Bundle extras = getIntent().getExtras();
         if(extras != null){
-            if(extras.getString("usernameR") != "") {
+            if(extras.getString("usernameR") != null) {
                 username = extras.getString("usernameR");
+                Log.d("extras", "usernameR :" + username);
             }
-            if(extras.getString("usernameL") != "") {
+            if(extras.getString("usernameL") != null) {
                 username = extras.getString("usernameL");
+                Log.d("extras", "usernameL :" + username);
             }
             Toast.makeText(sea.this, "Welcome  " + username, Toast.LENGTH_LONG).show();
         }

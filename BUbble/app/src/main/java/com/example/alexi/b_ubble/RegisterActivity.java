@@ -16,8 +16,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -26,6 +31,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private FirebaseAuth mAuth;
     private DatabaseReference myDb;
+    private final ArrayList<String> list = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,12 +97,33 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     newUser.child("name").setValue(username);
                     newUser.child("mail").setValue(email);
 
+                    myDb.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                if (ds.child("name").getValue() != null) {
+                                    list.add(ds.child("name").getValue().toString());
+                                    list.remove(username);
+
+                                    Intent intent = new Intent(RegisterActivity.this, sea.class);
+                                    intent.putStringArrayListExtra("list_user", list);
+                                    intent.putExtra("usernameR",username);
+                                    //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    progBar.setVisibility(View.GONE);
+                                    startActivity(intent);
+
+
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                     Toast.makeText(getApplicationContext(), "Inscription réussie", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(RegisterActivity.this, sea.class);
-                    intent.putExtra("usernameR",username);
-                    //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    progBar.setVisibility(View.GONE);
-                    startActivity(intent);
+
                 } else {
 
                     if (task.getException() instanceof FirebaseAuthUserCollisionException) {
